@@ -1,15 +1,18 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function InterviewPage() {
   const searchParams = useSearchParams();
 
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
-    setRole(searchParams.get("role"));
+    const r = searchParams.get("role");
+    if (r) setRole(r);
   }, [searchParams]);
 
   const questions = [
@@ -60,11 +63,11 @@ Improvements:
         <h3 className="question">{questions[currentIndex]}</h3>
 
         <textarea
-  className="textarea"
-  value={answers[currentIndex]}
-  onChange={handleChange}
-  placeholder="Type your answer here..."
-/>
+          className="textarea"
+          value={answers[currentIndex]}
+          onChange={handleChange}
+          placeholder="Type your answer here..."
+        />
 
         <button className="button blue" onClick={handleNext}>
           {currentIndex === questions.length - 1
