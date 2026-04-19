@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function InterviewPage() {
   const searchParams = useSearchParams();
-  const role = searchParams.get("role");
+
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    setRole(searchParams.get("role"));
+  }, [searchParams]);
 
   const questions = [
     "Tell me about yourself.",
@@ -26,7 +31,6 @@ export default function InterviewPage() {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // MOCK RESULT
       const result = `
 Score: 8/10
 
@@ -39,44 +43,35 @@ Improvements:
 - Be more technical
 `;
 
-      localStorage.setItem("result", result);
-      window.location.href = `/result?role=${role}`;
+      if (typeof window !== "undefined") {
+        localStorage.setItem("result", result);
+        window.location.href = `/result?role=${role}`;
+      }
     }
   };
 
   return (
-  <div className="container">
-    <div className="card">
-      
-      {/* PROGRESS BAR */}
-      <div className="progressBar">
-        <div
-          className="progressFill"
-          style={{
-            width: `${((currentIndex + 1) / questions.length) * 100}%`,
-          }}
-        />
+    <div className="container">
+      <div className="card">
+        <p className="progress">
+          Question {currentIndex + 1} of {questions.length}
+        </p>
+
+        <h3 className="question">{questions[currentIndex]}</h3>
+
+        <textarea
+  className="textarea"
+  value={answers[currentIndex]}
+  onChange={handleChange}
+  placeholder="Type your answer here..."
+/>
+
+        <button className="button blue" onClick={handleNext}>
+          {currentIndex === questions.length - 1
+            ? "Finish Interview"
+            : "Next"}
+        </button>
       </div>
-
-      <p className="progress">
-        Question {currentIndex + 1} of {questions.length}
-      </p>
-
-      <h3 className="question">{questions[currentIndex]}</h3>
-
-      <textarea
-        className="answerBox"
-        value={answers[currentIndex]}
-        onChange={handleChange}
-        placeholder="Write a clear, confident answer..."
-      />
-
-      <button className="button blue" onClick={handleNext}>
-        {currentIndex === questions.length - 1
-          ? "Finish Interview"
-          : "Next"}
-      </button>
     </div>
-  </div>
-);
+  );
 }
