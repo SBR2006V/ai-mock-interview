@@ -1,80 +1,24 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function ResultPage() {
   const searchParams = useSearchParams();
-  const role = searchParams.get("role");
 
+  const [role, setRole] = useState("");
   const [result, setResult] = useState("");
 
   useEffect(() => {
-  const storedResult = localStorage.getItem("result");
+    setRole(searchParams.get("role") || "");
 
-  if (storedResult) {
-    // simulate slight delay = feels like AI thinking
-    setTimeout(() => {
-      setResult(storedResult);
-    }, 500);
-  } else {
-    setResult("No result found.");
-  }
-}, []);
-
-  const formatResult = (text) => {
-    if (!text) return null;
-
-    const lines = text.split("\n");
-
-    return (
-      <div>
-        {lines.map((line, index) => {
-          if (line.trim() === "") return null;
-
-          // ✅ SCORE (premium style)
-          if (line.includes("Score")) {
-  const scoreValue = line.split(":")[1]?.trim();
-
-  return (
-    <div key={index} className="score">
-      ⭐ {scoreValue}
-    </div>
-  );
-}
-
-          // ✅ STRENGTHS
-          if (line.includes("Strengths")) {
-            return (
-              <h3 key={index} className="sectionTitle">
-                💪 {line}
-              </h3>
-            );
-          }
-
-          // ✅ IMPROVEMENTS
-          if (line.includes("Improvements")) {
-            return (
-              <h3 key={index} className="sectionTitle">
-                🚀 {line}
-              </h3>
-            );
-          }
-
-          // ✅ BULLETS
-          if (line.trim().startsWith("-")) {
-            return (
-              <p key={index} className="bullet">
-                {line}
-              </p>
-            );
-          }
-
-          return <p key={index}>{line}</p>;
-        })}
-      </div>
-    );
-  };
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("result");
+      setResult(stored || "No result found.");
+    }
+  }, [searchParams]);
 
   return (
     <div className="container">
@@ -83,7 +27,7 @@ export default function ResultPage() {
         <p className="subtitle">Role: {role}</p>
 
         <div className="result">
-          {formatResult(result)}
+          {result}
         </div>
 
         <button
