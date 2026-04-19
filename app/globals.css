@@ -1,26 +1,306 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: white;
+  min-height: 100vh;
+}
+
+/* ================= LAYOUT ================= */
+.container,
+.homeContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ================= CARD ================= */
+.card,
+.homeCard {
+  backdrop-filter: blur(20px);
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 40px;
+  width: 420px;
+  text-align: center;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  animation: fadeIn 0.5s ease;
+}
+
+/* ================= TEXT ================= */
+.title,
+.homeTitle {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.subtitle,
+.homeSubtitle {
+  color: #94a3b8;
+  margin-bottom: 25px;
+}
+
+.progress {
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.question {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* ================= INPUT ================= */
+.inputLabel {
+  font-size: 13px;
+  color: #94a3b8;
+  text-align: left;
+}
+
+.answerBox {
+  width: 100%;
+  min-height: 130px;
+  padding: 14px;
+  border-radius: 12px;
+
+  background: rgba(2, 6, 23, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  color: white;
+  font-size: 14px;
+
+  outline: none;
+  resize: none;
+
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  transition: all 0.25s ease;
+}
+
+.answerBox::placeholder {
+  color: #64748b;
+}
+
+.answerBox:focus {
+  border: 1px solid #3b82f6;
+  box-shadow:
+    0 0 0 2px rgba(59, 130, 246, 0.3),
+    0 10px 25px rgba(0, 0, 0, 0.3);
+
+  background: rgba(2, 6, 23, 1);
+}
+
+/* ================= RESULT ================= */
+.result {
+  background: rgba(2, 6, 23, 0.95);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: left;
+  margin-bottom: 25px;
+  line-height: 1.6;
+
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* SCORE */
+.score {
+  font-size: 22px;
+  font-weight: bold;
+  color: #22c55e;
+  margin-bottom: 10px;
+}
+
+/* SECTIONS */
+.sectionTitle {
+  margin-top: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.bullet {
+  margin-left: 12px;
+  color: #cbd5f5;
+}
+
+/* ================= BUTTON ================= */
+.button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+/* GREEN BUTTON */
+.button.green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.button.green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+}
+
+/* BLUE BUTTON */
+.button.blue {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.button.blue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+}
+
+/* ================= HOME BUTTONS ================= */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.roleBtn {
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.roleBtn.blue {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.roleBtn.green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.roleBtn.purple {
+  background: linear-gradient(135deg, #a855f7, #7e22ce);
+  color: white;
+}
+
+.roleBtn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+.roleBtn:active {
+  transform: scale(0.98);
+}
+
+/* ================= ANIMATION ================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ================= PROGRESS BAR ================= */
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+  transition: width 0.4s ease;
+}
+
+/* ================= GLOW CARD ================= */
+.card {
+  position: relative;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(34,197,94,0.2));
+  z-index: -1;
+  filter: blur(20px);
+}
+
+/* ================= PREMIUM BUTTON ================= */
+.button {
+  position: relative;
+  overflow: hidden;
+}
+
+.button::after {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 100%;
+  top: 0;
+  left: -120%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: 0.5s;
+}
+
+.button:hover::after {
+  left: 120%;
+}
+
+/* ================= SCORE BADGE ================= */
+.score {
+  font-size: 26px;
+  font-weight: 700;
+  color: #22c55e;
+  margin-bottom: 12px;
+  text-shadow: 0 0 10px rgba(34,197,94,0.4);
+}
+
+/* ================= RESULT CARD DEPTH ================= */
+.result {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* ================= TEXTAREA UPGRADE ================= */
+.answerBox {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ================= MICRO INTERACTIONS ================= */
+.card:hover {
+  transform: translateY(-2px);
+  transition: 0.3s ease;
 }
