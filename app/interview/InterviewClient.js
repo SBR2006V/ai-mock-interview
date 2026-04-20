@@ -14,14 +14,25 @@ export default function InterviewClient() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  // ✅ Get role from URL
+  // 🔥 Timer
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // ✅ Get role
   useEffect(() => {
     const r = searchParams.get("role");
     if (r) setRole(r);
   }, [searchParams]);
 
-  // ✅ Fetch AI-generated questions
+  // ✅ Fetch questions
   useEffect(() => {
     if (!role) return;
 
@@ -50,21 +61,28 @@ export default function InterviewClient() {
     fetchQuestions();
   }, [role]);
 
-  // ✅ Handle typing
+  // ✅ Handle input
   const handleChange = (e) => {
     const newAnswers = [...answers];
     newAnswers[currentIndex] = e.target.value;
     setAnswers(newAnswers);
+    setError(""); // clear error when typing
   };
 
-  // ✅ Handle Next / Submit
+  // ✅ Handle next
   const handleNext = async () => {
+    // 🔥 Validation (better than alert)
+    if (!answers[currentIndex] || answers[currentIndex].trim() === "") {
+      setError("Please write an answer before proceeding.");
+      return;
+    }
+
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
       return;
     }
 
-    // 🔥 Final submission (evaluate ALL answers)
+    // 🔥 Final submission
     setSubmitting(true);
 
     try {
@@ -85,21 +103,17 @@ export default function InterviewClient() {
         results.push(data);
       }
 
-      // ✅ Average score
       const avgScore =
         results.reduce((sum, r) => sum + (r.score || 0), 0) /
         results.length;
 
       const finalScore = Math.round(avgScore);
 
-      // ✅ Merge feedback
       const strengths = results.map((r) => r.strengths).join(" ");
       const improvements = results.map((r) => r.improvements).join(" ");
 
-      // Pick first model answer (simple strategy)
       const model_answer = results[0]?.model_answer || "";
 
-      // ✅ Verdict logic
       let verdict = "Poor";
       if (finalScore >= 8) verdict = "Excellent";
       else if (finalScore >= 6) verdict = "Good";
@@ -113,19 +127,19 @@ export default function InterviewClient() {
         model_answer,
       };
 
-      // ✅ Store result
       localStorage.setItem("result", JSON.stringify(finalResult));
       localStorage.setItem("interview_done", "true");
 
       router.push(`/result?role=${role}`);
     } catch (err) {
       console.error(err);
+      setError("Something went wrong. Try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // ✅ Loading UI
+  // ✅ Loading screen
   if (loadingQuestions) {
     return (
       <div className="container">
@@ -139,6 +153,12 @@ export default function InterviewClient() {
   return (
     <div className="container">
       <div className="card">
+        {/* 🔥 Timer */}
+        <p className="progress">
+          ⏱ {Math.floor(time / 60)}:
+          {(time % 60).toString().padStart(2, "0")}
+        </p>
+
         <p className="progress">
           Question {currentIndex + 1} of {questions.length}
         </p>
@@ -151,6 +171,16 @@ export default function InterviewClient() {
           onChange={handleChange}
           placeholder="Type your answer here..."
         />
+
+        {/* 🔥 Character counter */}
+        <p style={{ fontSize: "12px", opacity: 0.7 }}>
+          {answers[currentIndex]?.length || 0} characters
+        </p>
+
+        {/* 🔥 Error message */}
+        {error && (
+          <p style={{ color: "#ef4444", marginTop: "8px" }}>{error}</p>
+        )}
 
         <button
           className="button blue"
