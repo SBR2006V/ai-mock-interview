@@ -7,53 +7,24 @@ export default function ResultClient() {
   const searchParams = useSearchParams();
   const role = searchParams.get("role");
 
-  const [result, setResult] = useState("");
+  const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    const storedResult = localStorage.getItem("result");
-
-    if (storedResult) {
-      setResult(storedResult);
-    } else {
-      setResult("No result found.");
+    const stored = localStorage.getItem("result");
+    if (stored) {
+      setFeedback(JSON.parse(stored));
     }
   }, []);
 
-  const formatResult = (text) => {
-    if (!text) return null;
-
-    const lines = text.split("\n");
-
+  if (!feedback) {
     return (
-      <div>
-        {lines.map((line, index) => {
-          if (line.trim() === "") return null;
-
-          if (line.includes("Score")) {
-            return (
-              <div key={index} className="score">
-                {line}
-              </div>
-            );
-          }
-
-          if (line.includes("Strengths")) {
-            return <h3 key={index}>💪 {line}</h3>;
-          }
-
-          if (line.includes("Improvements")) {
-            return <h3 key={index}>🚀 {line}</h3>;
-          }
-
-          if (line.startsWith("-")) {
-            return <p key={index}>{line}</p>;
-          }
-
-          return <p key={index}>{line}</p>;
-        })}
+      <div className="container">
+        <div className="card">
+          <p>Loading result...</p>
+        </div>
       </div>
     );
-  };
+  }
 
   return (
     <div className="container">
@@ -61,7 +32,18 @@ export default function ResultClient() {
         <h1 className="title">Interview Result</h1>
         <p className="subtitle">Role: {role}</p>
 
-        <div className="result">{formatResult(result)}</div>
+        <div className="score">
+          Score: {feedback.score}/10 — {feedback.verdict}
+        </div>
+
+        <h3>💪 Strengths</h3>
+        <p>{feedback.strengths}</p>
+
+        <h3>🚀 What to Improve</h3>
+        <p>{feedback.improvements}</p>
+
+        <h3>✅ Model Answer</h3>
+        <p>{feedback.model_answer}</p>
 
         <button
           className="button green"

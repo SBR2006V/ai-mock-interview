@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation";
 
 export default function InterviewClient() {
   const searchParams = useSearchParams();
-
   const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const r = searchParams.get("role");
@@ -28,26 +28,32 @@ export default function InterviewClient() {
     setAnswers(newAnswers);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      const result = `
-Score: 8/10
+      // User finished all questions, now call AI
+      setLoading(true);
 
-Strengths:
-- Clear communication
-- Strong motivation
+      // We evaluate the last answer (you can later evaluate all answers)
+      const res = await fetch("/api/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: questions[currentIndex],
+          answer: answers[currentIndex],
+          role: role,
+        }),
+      });
 
-Improvements:
-- Add real project examples
-- Be more technical
-`;
+      const feedback = await res.json();
 
-      if (typeof window !== "undefined") {
-        localStorage.setItem("result", result);
-        window.location.href = `/result?role=${role}`;
-      }
+      // Save AI feedback to localStorage so ResultClient can read it
+      localStorage.setItem("result", JSON.stringify(feedback));
+      localStorage.setItem("interview_done", "true");
+
+      setLoading(false);
+      window.location.href = `/result?role=${role}`;
     }
   };
 
@@ -67,8 +73,10 @@ Improvements:
           placeholder="Type your answer here..."
         />
 
-        <button className="button blue" onClick={handleNext}>
-          {currentIndex === questions.length - 1
+        <button className="button blue" onClick={handleNext} disabled={loading}>
+          {loading
+            ? "Analyzing your answer..."
+            : currentIndex === questions.length - 1
             ? "Finish Interview"
             : "Next"}
         </button>
