@@ -27,20 +27,29 @@ export async function POST(request) {
         {
           role: "user",
           content: `
-You are an expert interviewer evaluating a candidate for a ${role} role.
+          You are an expert technical interviewer.
 
-Question asked: "${question}"
-Candidate's answer: "${answer}"
+          Evaluate the candidate's answer for a ${role} role.
 
-Evaluate the answer and respond ONLY in this exact JSON format, nothing else:
-{
-  "score": <number from 0 to 10>,
-  "verdict": "<one word: Excellent, Good, Average, or Poor>",
-  "strengths": "<one sentence about what was good>",
-  "improvements": "<one sentence about what to improve>",
-  "model_answer": "<a brief ideal answer in 2-3 sentences>"
-}
-`,
+          Question: "${question}"
+          Answer: "${answer}"
+
+          Respond ONLY in valid JSON format:
+
+          {
+            "score": number (0-10),
+            "verdict": "Excellent | Good | Average | Poor",
+            "strengths": ["point 1", "point 2"],
+            "improvements": ["point 1", "point 2"],
+            "model_answer": ["point 1", "point 2"]
+          }
+
+Rules:
+- Keep each point short (1 line max)
+- No paragraphs
+- No explanations outside JSON
+- No markdown
+`
         },
       ],
     });

@@ -1,6 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className="homeContainer">
       <div className="homeCard">
@@ -12,29 +16,31 @@ export default function Home() {
         <div className="buttonGroup">
           <button
             className="roleBtn blue"
-            onClick={() =>
-              (window.location.href = "/interview?role=frontend")
-            }
+            onClick={() => router.push("/interview?role=frontend")}
           >
             💻 Frontend Developer
           </button>
 
           <button
             className="roleBtn green"
-            onClick={() =>
-              (window.location.href = "/interview?role=backend")
-            }
+            onClick={() => router.push("/interview?role=backend")}
           >
             ⚙️ Backend Developer
           </button>
 
           <button
             className="roleBtn purple"
-            onClick={() =>
-              (window.location.href = "/interview?role=hr")
-            }
+            onClick={() => router.push("/interview?role=hr")}
           >
             🧑‍💼 HR Interview
+          </button>
+
+          {/* 🔥 NEW FEATURE */}
+          <button
+            className="roleBtn orange"
+            onClick={() => router.push("/resume")}
+          >
+            📄 Resume Analyzer
           </button>
         </div>
       </div>

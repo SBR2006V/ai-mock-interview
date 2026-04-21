@@ -11,11 +11,9 @@ export default function ResultClient() {
   const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    // ✅ safe role extraction
     const r = searchParams.get("role");
     if (r) setRole(r);
 
-    // ✅ safe localStorage parsing
     try {
       const stored = localStorage.getItem("result");
       if (stored) {
@@ -39,16 +37,17 @@ export default function ResultClient() {
   return (
     <div className="container">
       <div className="card">
-        <h1 className="title">Interview Result</h1>
-        <p className="subtitle">Role: {role}</p>
 
-        {/* 🔥 Score Section */}
-        <div style={{ marginBottom: "20px" }}>
+        {/* 🔥 HEADER (CENTERED) */}
+        <div style={{ textAlign: "center" }}>
+          <h1 className="title">Interview Result</h1>
+          <p className="subtitle">Role: {role}</p>
+
           <h2 style={{ marginBottom: "10px" }}>
             Score: {feedback.score}/10
           </h2>
 
-          {/* 🔥 Animated Progress Bar */}
+          {/* Progress bar */}
           <div
             style={{
               width: "100%",
@@ -68,7 +67,7 @@ export default function ResultClient() {
             />
           </div>
 
-          {/* 🔥 Verdict Badge */}
+          {/* Verdict */}
           <span
             style={{
               background:
@@ -90,23 +89,48 @@ export default function ResultClient() {
           </span>
         </div>
 
-        {/* 🔥 Sections */}
-        <h3 className="sectionTitle">💪 Strengths</h3>
-        <p>{feedback.strengths}</p>
-
-        <h3 className="sectionTitle">⚠ Improvements</h3>
-        <p>{feedback.improvements}</p>
-
-        <h3 className="sectionTitle">✅ Model Answer</h3>
-        <p>{feedback.model_answer}</p>
-
-        {/* 🔥 Proper Navigation */}
-        <button
-          className="button green"
-          onClick={() => router.push("/")}
+        {/* 🔥 CONTENT (LEFT ALIGNED FIX) */}
+        <div
+          style={{
+            textAlign: "left",
+            maxWidth: "600px",
+            margin: "20px auto 0",
+            lineHeight: "1.6",
+          }}
         >
-          Try Again
-        </button>
+          {/* Strengths */}
+          <h3 className="sectionTitle">💪 Strengths</h3>
+          <p style={{ opacity: 0.9 }}>
+            {feedback.strengths}
+          </p>
+
+          {/* Improvements */}
+          <h3 className="sectionTitle" style={{ marginTop: "20px" }}>
+            ⚠ Improvements
+          </h3>
+          <p style={{ opacity: 0.9 }}>
+            {feedback.improvements}
+          </p>
+
+          {/* Model Answer */}
+          <h3 className="sectionTitle" style={{ marginTop: "20px" }}>
+            ✅ Model Answer
+          </h3>
+          <p style={{ opacity: 0.9 }}>
+            {feedback.model_answer}
+          </p>
+        </div>
+
+        {/* 🔥 BUTTON */}
+        <div style={{ textAlign: "center", marginTop: "25px" }}>
+          <button
+            className="button green"
+            onClick={() => router.push("/")}
+          >
+            Try Again
+          </button>
+        </div>
+
       </div>
     </div>
   );
