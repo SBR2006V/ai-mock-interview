@@ -17,20 +17,21 @@ export default function ResumeResultPage() {
 
   // 🔥 SAVE RESUME HISTORY
   useEffect(() => {
-    if (!data) return;
+  if (!data) return;
 
-    const history = JSON.parse(localStorage.getItem("history") || "[]");
+  const history = JSON.parse(localStorage.getItem("history") || "[]");
 
-    const newEntry = {
-      type: "resume",
-      score: data.score,
-      date: new Date().toLocaleString(),
-    };
+  const newEntry = {
+    type: "resume",
+    score: data.score,
+    date: new Date().toLocaleString(),
+    full: data, // 🔥 IMPORTANT
+  };
 
-    const updatedHistory = [newEntry, ...history].slice(0, 10);
-    localStorage.setItem("history", JSON.stringify(updatedHistory));
+  const updatedHistory = [newEntry, ...history].slice(0, 10);
 
-  }, [data]);
+  localStorage.setItem("history", JSON.stringify(updatedHistory));
+}, [data]);
 
   if (!data) {
     return (

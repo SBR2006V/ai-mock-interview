@@ -27,26 +27,23 @@ export default function ResultClient() {
 
   // 🔥 SAVE INTERVIEW HISTORY (FIXED)
   useEffect(() => {
-    if (!feedback || !role) return;
+  if (!feedback || !role) return;
 
-    const history = JSON.parse(localStorage.getItem("history") || "[]");
+  const history = JSON.parse(localStorage.getItem("history") || "[]");
 
-    // duplicate entry
-    const alreadyExists = history[0]?.date === new Date().toLocaleDateString();
+  const newEntry = {
+    type: "interview",
+    role: role,
+    score: feedback.score,
+    verdict: feedback.verdict,
+    date: new Date().toLocaleString(),
+    full: feedback, // 🔥 IMPORTANT
+  };
 
-    if (!alreadyExists) {
-      const newEntry = {
-        type: "interview",
-        role: role,
-        score: feedback.score,
-        verdict: feedback.verdict,
-        date: new Date().toLocaleString(),
-      };
+  const updatedHistory = [newEntry, ...history].slice(0, 10);
 
-      const updatedHistory = [newEntry, ...history].slice(0, 10);
-      localStorage.setItem("history", JSON.stringify(updatedHistory));
-    }
-  }, [feedback, role]);
+  localStorage.setItem("history", JSON.stringify(updatedHistory));
+}, [feedback, role]);
 
   if (!feedback) {
     return (

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 export default function HistoryPage() {
   const router = useRouter();
   const [history, setHistory] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("history");
@@ -14,6 +15,12 @@ export default function HistoryPage() {
     }
   }, []);
 
+  const clearHistory = () => {
+    localStorage.removeItem("history");
+    setHistory([]);
+    setShowConfirm(false);
+  };
+
   return (
     <div className="container">
       <div className="card">
@@ -21,39 +28,49 @@ export default function HistoryPage() {
         <h1 className="title">📊 History</h1>
         <p className="subtitle">Your past analyses</p>
 
-        {/* 🔥 EMPTY STATE */}
+        {/* EMPTY STATE */}
         {history.length === 0 && (
           <p style={{ textAlign: "center", opacity: 0.7 }}>
             No history yet. Complete an interview or resume analysis.
           </p>
         )}
 
-        {/* 🔥 HISTORY LIST */}
+        {/* HISTORY LIST */}
         <div style={{ marginTop: "20px" }}>
           {history.map((item, index) => (
             <div
               key={index}
+              onClick={() => {
+                if (item.type === "interview") {
+                  localStorage.setItem("result", JSON.stringify(item.full));
+                  window.location.href = `/result?role=${item.role}`;
+                } else {
+                  localStorage.setItem("resume_result", JSON.stringify(item.full));
+                  window.location.href = `/resume/result`;
+                }
+              }}
               style={{
                 padding: "15px",
                 marginBottom: "12px",
                 borderRadius: "12px",
                 background: "#020617",
                 border: "1px solid rgba(255,255,255,0.05)",
+                cursor: "pointer",
+                transition: "0.2s",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              {/* TYPE */}
               <p style={{ fontSize: "14px", opacity: 0.7 }}>
                 {item.type === "interview" ? "🎤 Interview" : "📄 Resume"}
               </p>
 
-              {/* ROLE (only for interview) */}
               {item.role && (
                 <p style={{ fontWeight: "600" }}>
                   Role: {item.role}
                 </p>
               )}
 
-              {/* SCORE */}
               <p>
                 Score:{" "}
                 <span style={{ color: "#22c55e", fontWeight: "600" }}>
@@ -62,14 +79,12 @@ export default function HistoryPage() {
                 </span>
               </p>
 
-              {/* VERDICT */}
               {item.verdict && (
                 <p style={{ fontSize: "14px" }}>
                   Verdict: {item.verdict}
                 </p>
               )}
 
-              {/* DATE */}
               <p style={{ fontSize: "12px", opacity: 0.6 }}>
                 {item.date}
               </p>
@@ -77,16 +92,56 @@ export default function HistoryPage() {
           ))}
         </div>
 
-        {/* 🔥 BUTTON */}
-        <button
-          className="button blue"
-          style={{ marginTop: "15px" }}
-          onClick={() => router.push("/")}
-        >
-          Back to Home
-        </button>
+        {/* BUTTONS */}
+        <div style={{ display: "flex", gap: "10px", marginTop: "15px" }}>
+
+          <button
+            className="button"
+            style={{ background: "#ef4444", color: "white" }}
+            onClick={() => setShowConfirm(true)}
+          >
+            🗑 Clear History
+          </button>
+
+          <button
+            className="button blue"
+            onClick={() => router.push("/")}
+          >
+            Back to Home
+          </button>
+
+        </div>
 
       </div>
+
+      {/* 🔥 CUSTOM MODAL */}
+      {showConfirm && (
+        <div className="modalOverlay">
+          <div className="modalBox">
+            <h3>Clear History?</h3>
+            <p style={{ opacity: 0.8 }}>
+              This action cannot be undone.
+            </p>
+
+            <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+              <button
+                className="button"
+                style={{ background: "#ef4444", color: "white" }}
+                onClick={clearHistory}
+              >
+                Yes, Clear
+              </button>
+
+              <button
+                className="button"
+                onClick={() => setShowConfirm(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
