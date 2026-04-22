@@ -42,6 +42,12 @@ export default function Home() {
           >
             📄 Resume Analyzer
           </button>
+          <button
+            className="roleBtn orange"
+            onClick={() => router.push("/history")}
+          >
+            📊 View History
+          </button>
         </div>
       </div>
     </div>

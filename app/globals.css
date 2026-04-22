@@ -348,3 +348,7 @@ body {
 .roleBtn.orange {
   background: linear-gradient(135deg, #f97316, #ea580c);
 }
+.roleBtn.orange {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+}

@@ -10,6 +10,7 @@ export default function ResultClient() {
   const [role, setRole] = useState("");
   const [feedback, setFeedback] = useState(null);
 
+  // ✅ Load result
   useEffect(() => {
     const r = searchParams.get("role");
     if (r) setRole(r);
@@ -23,6 +24,29 @@ export default function ResultClient() {
       console.error("Invalid result data");
     }
   }, [searchParams]);
+
+  // 🔥 SAVE INTERVIEW HISTORY (FIXED)
+  useEffect(() => {
+    if (!feedback || !role) return;
+
+    const history = JSON.parse(localStorage.getItem("history") || "[]");
+
+    // duplicate entry
+    const alreadyExists = history[0]?.date === new Date().toLocaleDateString();
+
+    if (!alreadyExists) {
+      const newEntry = {
+        type: "interview",
+        role: role,
+        score: feedback.score,
+        verdict: feedback.verdict,
+        date: new Date().toLocaleString(),
+      };
+
+      const updatedHistory = [newEntry, ...history].slice(0, 10);
+      localStorage.setItem("history", JSON.stringify(updatedHistory));
+    }
+  }, [feedback, role]);
 
   if (!feedback) {
     return (
@@ -38,95 +62,91 @@ export default function ResultClient() {
     <div className="container">
       <div className="card">
 
-        {/* 🔥 HEADER (CENTERED) */}
+        {/* HEADER */}
         <div style={{ textAlign: "center" }}>
           <h1 className="title">Interview Result</h1>
           <p className="subtitle">Role: {role}</p>
 
-          <h2 style={{ marginBottom: "10px" }}>
-            Score: {feedback.score}/10
-          </h2>
+          <h2>Score: {feedback.score}/10</h2>
 
-          {/* Progress bar */}
-          <div
-            style={{
-              width: "100%",
-              background: "#1e293b",
-              borderRadius: "10px",
-              overflow: "hidden",
-              marginBottom: "10px",
-            }}
-          >
-            <div
-              style={{
-                width: `${feedback.score * 10}%`,
-                background: "linear-gradient(90deg, #22c55e, #16a34a)",
-                height: "10px",
-                transition: "width 0.6s ease",
-              }}
-            />
+          <div style={{
+            width: "100%",
+            background: "#1e293b",
+            borderRadius: "10px",
+            overflow: "hidden",
+            marginBottom: "10px",
+          }}>
+            <div style={{
+              width: `${feedback.score * 10}%`,
+              height: "10px",
+              background: "linear-gradient(90deg, #22c55e, #16a34a)",
+            }} />
           </div>
 
-          {/* Verdict */}
-          <span
-            style={{
-              background:
-                feedback.verdict === "Excellent"
-                  ? "#22c55e"
-                  : feedback.verdict === "Good"
-                  ? "#3b82f6"
-                  : feedback.verdict === "Average"
-                  ? "#f59e0b"
-                  : "#ef4444",
-              padding: "6px 12px",
-              borderRadius: "20px",
-              color: "white",
-              fontSize: "14px",
-              fontWeight: "600",
-            }}
-          >
+          <span style={{
+            background:
+              feedback.verdict === "Excellent"
+                ? "#22c55e"
+                : feedback.verdict === "Good"
+                ? "#3b82f6"
+                : feedback.verdict === "Average"
+                ? "#f59e0b"
+                : "#ef4444",
+            padding: "6px 12px",
+            borderRadius: "20px",
+            color: "white",
+          }}>
             {feedback.verdict}
           </span>
         </div>
 
-        {/* 🔥 CONTENT (LEFT ALIGNED FIX) */}
-        <div
-          style={{
-            textAlign: "left",
-            maxWidth: "600px",
-            margin: "20px auto 0",
-            lineHeight: "1.6",
-          }}
-        >
-          {/* Strengths */}
-          <h3 className="sectionTitle">💪 Strengths</h3>
-          <p style={{ opacity: 0.9 }}>
-            {feedback.strengths}
-          </p>
+        {/* CONTENT */}
+        <div style={{
+          textAlign: "left",
+          maxWidth: "600px",
+          margin: "20px auto",
+        }}>
+          <h3>💪 Strengths</h3>
+          <ul>
+          {(
+            Array.isArray(feedback.strengths)
+              ? feedback.strengths
+              : feedback.strengths
+              ? [feedback.strengths]
+              : []
+            ).map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+          <h3>⚠ Improvements</h3>
+          <ul>
+          {(
+            Array.isArray(feedback.improvements)
+              ? feedback.improvements
+              : feedback.improvements
+              ? [feedback.improvements]
+              : []
+            ).map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
 
-          {/* Improvements */}
-          <h3 className="sectionTitle" style={{ marginTop: "20px" }}>
-            ⚠ Improvements
-          </h3>
-          <p style={{ opacity: 0.9 }}>
-            {feedback.improvements}
-          </p>
-
-          {/* Model Answer */}
-          <h3 className="sectionTitle" style={{ marginTop: "20px" }}>
-            ✅ Model Answer
-          </h3>
-          <p style={{ opacity: 0.9 }}>
-            {feedback.model_answer}
-          </p>
+          <h3>✅ Model Answer</h3>
+          <ul>
+          {(
+            Array.isArray(feedback.model_answer)
+            ? feedback.model_answer
+            : feedback.model_answer
+            ? [feedback.model_answer]
+            : []
+          ).map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ul>
         </div>
 
-        {/* 🔥 BUTTON */}
-        <div style={{ textAlign: "center", marginTop: "25px" }}>
-          <button
-            className="button green"
-            onClick={() => router.push("/")}
-          >
+        <div style={{ textAlign: "center" }}>
+          <button className="button green" onClick={() => router.push("/")}>
             Try Again
           </button>
         </div>
