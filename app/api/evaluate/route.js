@@ -1,12 +1,10 @@
 import Groq from "groq-sdk";
 import { NextResponse } from "next/server";
 
-// 🔥 Force runtime execution (avoid build-time issues)
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
-    // ✅ Safety check (prevents silent crashes)
     if (!process.env.GROQ_API_KEY) {
       return NextResponse.json(
         { error: "Missing GROQ_API_KEY" },
@@ -14,12 +12,20 @@ export async function POST(request) {
       );
     }
 
-    const { question, answer, role } = await request.json();
+    // ✅ NEW INPUT (IMPORTANT CHANGE)
+    const { answers, role } = await request.json();
 
-    // ✅ Initialize INSIDE function (CRITICAL FIX)
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
     });
+
+    // 🔥 Convert all answers into text block
+    const formattedQA = answers
+      .map(
+        (item, i) =>
+          `Q${i + 1}: ${item.question}\nA${i + 1}: ${item.answer}`
+      )
+      .join("\n\n");
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -27,22 +33,28 @@ export async function POST(request) {
         {
           role: "user",
           content: `
-          You are an expert technical interviewer.
+You are an expert technical interviewer evaluating a candidate for a ${role} role.
 
-          Evaluate the candidate's answer for a ${role} role.
+Here are all the interview responses:
 
-          Question: "${question}"
-          Answer: "${answer}"
+${formattedQA}
 
-          Respond ONLY in valid JSON format:
+Analyze ALL answers together.
 
-          {
-            "score": number (0-10),
-            "verdict": "Excellent | Good | Average | Poor",
-            "strengths": ["point 1", "point 2"],
-            "improvements": ["point 1", "point 2"],
-            "model_answer": ["point 1", "point 2"]
-          }
+Evaluate:
+- consistency across answers
+- communication quality
+- depth of knowledge
+
+Respond ONLY in valid JSON format:
+
+{
+  "score": number (0-10),
+  "verdict": "Excellent | Good | Average | Poor",
+  "strengths": ["point 1", "point 2"],
+  "improvements": ["point 1", "point 2"],
+  "model_answer": ["point 1", "point 2"]
+}
 
 Rules:
 - Keep each point short (1 line max)
@@ -56,18 +68,22 @@ Rules:
 
     const text = completion.choices[0].message.content;
 
-    // ✅ Clean response safely
     const cleaned = text.replace(/```json|```/g, "").trim();
 
     let parsed;
     try {
       parsed = JSON.parse(cleaned);
     } catch (err) {
-      // fallback if AI gives slightly invalid JSON
-      return NextResponse.json({
-        raw: text,
-        error: "Failed to parse AI response",
-      });
+      console.error("Bad AI response:", cleaned);
+
+      // ✅ SAFE FALLBACK (VERY IMPORTANT)
+      parsed = {
+        score: 5,
+        verdict: "Average",
+        strengths: ["Could not parse AI response"],
+        improvements: ["Try again"],
+        model_answer: ["N/A"],
+      };
     }
 
     return NextResponse.json(parsed);

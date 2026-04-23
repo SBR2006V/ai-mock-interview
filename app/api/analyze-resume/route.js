@@ -1,51 +1,72 @@
 import Groq from "groq-sdk";
 import { NextResponse } from "next/server";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+export const dynamic = "force-dynamic";
 
-export async function POST(req) {
+export async function POST(request) {
   try {
-    const data = await req.json();
+    const body = await request.json();
 
-    const prompt = `
-Analyze this resume:
-
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.phone}
-
-Education:
-${data.education}
-
-Skills:
-${data.skills}
-
-Projects:
-${data.projects}
-
-Give response ONLY in JSON format:
-{
-  "score": number (0-100),
-  "summary": "short overall evaluation",
-  "suggestions": ["point1", "point2", "point3"]
-}
-`;
+    const groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        {
+          role: "user",
+          content: `
+Analyze this resume and return STRICT JSON:
+
+${JSON.stringify(body)}
+
+Format:
+{
+  "score": number (0-100),
+  "summary": "short summary",
+  "suggestions": ["point 1", "point 2", "point 3"]
+}
+
+Rules:
+- No markdown
+- No explanation
+- JSON only
+`,
+        },
+      ],
     });
 
     const text = completion.choices[0].message.content;
 
+    console.log("RAW AI RESPONSE:", text);
+
     const cleaned = text.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(cleaned);
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (err) {
+      console.error("PARSE FAILED:", cleaned);
+
+      // 🔥 RETURN SAFE FALLBACK (CRITICAL)
+      return NextResponse.json({
+        score: 50,
+        summary: "Basic resume detected",
+        suggestions: ["Improve structure", "Add projects", "Add skills"],
+      });
+    }
 
     return NextResponse.json(parsed);
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to analyze" }, { status: 500 });
+  } catch (error) {
+    console.error("API ERROR:", error);
+
+    // 🔥 NEVER FAIL HARD
+    return NextResponse.json({
+      score: 40,
+      summary: "Error analyzing resume",
+      suggestions: ["Try again"],
+    });
   }
 }

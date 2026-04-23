@@ -66,12 +66,11 @@ export default function InterviewClient() {
     const newAnswers = [...answers];
     newAnswers[currentIndex] = e.target.value;
     setAnswers(newAnswers);
-    setError(""); // clear error when typing
+    setError("");
   };
 
   // ✅ Handle next
   const handleNext = async () => {
-    // 🔥 Validation (better than alert)
     if (!answers[currentIndex] || answers[currentIndex].trim() === "") {
       setError("Please write an answer before proceeding.");
       return;
@@ -82,51 +81,29 @@ export default function InterviewClient() {
       return;
     }
 
-    // 🔥 Final submission
+    // 🔥 FINAL SUBMISSION (UPDATED LOGIC)
     setSubmitting(true);
 
     try {
-      const results = [];
-
-      for (let i = 0; i < questions.length; i++) {
-        const res = await fetch("/api/evaluate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            question: questions[i],
+      const res = await fetch("/api/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          role: role,
+          answers: questions.map((q, i) => ({
+            question: q,
             answer: answers[i],
-            role: role,
-          }),
-        });
+          })),
+        }),
+      });
 
-        const data = await res.json();
-        results.push(data);
+      if (!res.ok) {
+        throw new Error("API failed");
       }
 
-      const avgScore =
-        results.reduce((sum, r) => sum + (r.score || 0), 0) /
-        results.length;
+      const finalResult = await res.json();
 
-      const finalScore = Math.round(avgScore);
-
-      const strengths = results.map((r) => r.strengths).join(" ");
-      const improvements = results.map((r) => r.improvements).join(" ");
-
-      const model_answer = results[0]?.model_answer || "";
-
-      let verdict = "Poor";
-      if (finalScore >= 8) verdict = "Excellent";
-      else if (finalScore >= 6) verdict = "Good";
-      else if (finalScore >= 4) verdict = "Average";
-
-      const finalResult = {
-        score: finalScore,
-        verdict,
-        strengths,
-        improvements,
-        model_answer,
-      };
-
+      // ✅ Save directly (no manual calculation anymore)
       localStorage.setItem("result", JSON.stringify(finalResult));
       localStorage.setItem("interview_done", "true");
 
@@ -139,7 +116,7 @@ export default function InterviewClient() {
     }
   };
 
-  // ✅ Loading screen
+  // ✅ Loading UI
   if (loadingQuestions) {
     return (
       <div className="container">
@@ -153,7 +130,7 @@ export default function InterviewClient() {
   return (
     <div className="container">
       <div className="card">
-        {/* 🔥 Timer */}
+        {/* Timer */}
         <p className="progress">
           ⏱ {Math.floor(time / 60)}:
           {(time % 60).toString().padStart(2, "0")}
@@ -172,12 +149,10 @@ export default function InterviewClient() {
           placeholder="Type your answer here..."
         />
 
-        {/* 🔥 Character counter */}
         <p style={{ fontSize: "12px", opacity: 0.7 }}>
           {answers[currentIndex]?.length || 0} characters
         </p>
 
-        {/* 🔥 Error message */}
         {error && (
           <p style={{ color: "#ef4444", marginTop: "8px" }}>{error}</p>
         )}
