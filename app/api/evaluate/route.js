@@ -8,7 +8,7 @@ export async function POST(request) {
     if (!process.env.GROQ_API_KEY) {
       return NextResponse.json(
         { error: "Missing GROQ_API_KEY" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -22,8 +22,7 @@ export async function POST(request) {
     // 🔥 Convert all answers into text block
     const formattedQA = answers
       .map(
-        (item, i) =>
-          `Q${i + 1}: ${item.question}\nA${i + 1}: ${item.answer}`
+        (item, i) => `Q${i + 1}: ${item.question}\nA${i + 1}: ${item.answer}`,
       )
       .join("\n\n");
 
@@ -61,7 +60,7 @@ Rules:
 - No paragraphs
 - No explanations outside JSON
 - No markdown
-`
+`,
         },
       ],
     });
@@ -92,7 +91,7 @@ Rules:
 
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
