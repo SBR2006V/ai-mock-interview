@@ -10,7 +10,7 @@ export default function ResultClient() {
   const [role, setRole] = useState("");
   const [feedback, setFeedback] = useState(null);
 
-  // ✅ Load result
+  // ✅ Load result (ONLY read, no writing)
   useEffect(() => {
     const r = searchParams.get("role");
     if (r) setRole(r);
@@ -25,26 +25,6 @@ export default function ResultClient() {
     }
   }, [searchParams]);
 
-  // 🔥 SAVE INTERVIEW HISTORY (FIXED)
-  useEffect(() => {
-  if (!feedback || !role) return;
-
-  const history = JSON.parse(localStorage.getItem("history") || "[]");
-
-  const newEntry = {
-    type: "interview",
-    role: role,
-    score: feedback.score,
-    verdict: feedback.verdict,
-    date: new Date().toLocaleString(),
-    full: feedback, // 🔥 IMPORTANT
-  };
-
-  const updatedHistory = [newEntry, ...history].slice(0, 10);
-
-  localStorage.setItem("history", JSON.stringify(updatedHistory));
-}, [feedback, role]);
-
   if (!feedback) {
     return (
       <div className="container">
@@ -58,7 +38,6 @@ export default function ResultClient() {
   return (
     <div className="container">
       <div className="card">
-
         {/* HEADER */}
         <div style={{ textAlign: "center" }}>
           <h1 className="title">Interview Result</h1>
@@ -66,63 +45,70 @@ export default function ResultClient() {
 
           <h2>Score: {feedback.score}/10</h2>
 
-          <div style={{
-            width: "100%",
-            background: "#1e293b",
-            borderRadius: "10px",
-            overflow: "hidden",
-            marginBottom: "10px",
-          }}>
-            <div style={{
-              width: `${feedback.score * 10}%`,
-              height: "10px",
-              background: "linear-gradient(90deg, #22c55e, #16a34a)",
-            }} />
+          <div
+            style={{
+              width: "100%",
+              background: "#1e293b",
+              borderRadius: "10px",
+              overflow: "hidden",
+              marginBottom: "10px",
+            }}
+          >
+            <div
+              style={{
+                width: `${feedback.score * 10}%`,
+                height: "10px",
+                background: "linear-gradient(90deg, #22c55e, #16a34a)",
+              }}
+            />
           </div>
 
-          <span style={{
-            background:
-              feedback.verdict === "Excellent"
-                ? "#22c55e"
-                : feedback.verdict === "Good"
-                ? "#3b82f6"
-                : feedback.verdict === "Average"
-                ? "#f59e0b"
-                : "#ef4444",
-            padding: "6px 12px",
-            borderRadius: "20px",
-            color: "white",
-          }}>
+          <span
+            style={{
+              background:
+                feedback.verdict === "Excellent"
+                  ? "#22c55e"
+                  : feedback.verdict === "Good"
+                    ? "#3b82f6"
+                    : feedback.verdict === "Average"
+                      ? "#f59e0b"
+                      : "#ef4444",
+              padding: "6px 12px",
+              borderRadius: "20px",
+              color: "white",
+            }}
+          >
             {feedback.verdict}
           </span>
         </div>
 
         {/* CONTENT */}
-        <div style={{
-          textAlign: "left",
-          maxWidth: "600px",
-          margin: "20px auto",
-        }}>
+        <div
+          style={{
+            textAlign: "left",
+            maxWidth: "600px",
+            margin: "20px auto",
+          }}
+        >
           <h3>💪 Strengths</h3>
           <ul>
-          {(
-            Array.isArray(feedback.strengths)
+            {(Array.isArray(feedback.strengths)
               ? feedback.strengths
               : feedback.strengths
-              ? [feedback.strengths]
-              : []
+                ? [feedback.strengths]
+                : []
             ).map((item, i) => (
               <li key={i}>{item}</li>
             ))}
           </ul>
+
           <h3>⚠ Improvements</h3>
           <ul>
-          {(
-            Array.isArray(feedback.improvements)
+            {(Array.isArray(feedback.improvements)
               ? feedback.improvements
               : feedback.improvements
-              ? [feedback.improvements]
-              : []
+                ? [feedback.improvements]
+                : []
             ).map((item, i) => (
               <li key={i}>{item}</li>
             ))}
@@ -130,24 +116,23 @@ export default function ResultClient() {
 
           <h3>✅ Model Answer</h3>
           <ul>
-          {(
-            Array.isArray(feedback.model_answer)
-            ? feedback.model_answer
-            : feedback.model_answer
-            ? [feedback.model_answer]
-            : []
-          ).map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
-        </ul>
+            {(Array.isArray(feedback.model_answer)
+              ? feedback.model_answer
+              : feedback.model_answer
+                ? [feedback.model_answer]
+                : []
+            ).map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
         </div>
 
+        {/* ACTION */}
         <div style={{ textAlign: "center" }}>
           <button className="button green" onClick={() => router.push("/")}>
             Try Again
           </button>
         </div>
-
       </div>
     </div>
   );

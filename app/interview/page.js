@@ -5,8 +5,10 @@ import InterviewClient from "./InterviewClient";
 
 export default function Page() {
   return (
-    <Suspense fallback={<div className="container">Loading...</div>}>
-      <InterviewClient />
-    </Suspense>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <Suspense fallback={<div className="text-lg">Loading Interview...</div>}>
+        <InterviewClient />
+      </Suspense>
+    </div>
   );
 }

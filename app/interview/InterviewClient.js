@@ -16,9 +16,9 @@ export default function InterviewClient() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // 🔥 Timer
   const [time, setTime] = useState(0);
 
+  // ⏱ Timer
   useEffect(() => {
     const interval = setInterval(() => {
       setTime((prev) => prev + 1);
@@ -69,7 +69,7 @@ export default function InterviewClient() {
     setError("");
   };
 
-  // ✅ Handle next
+  // ✅ Handle next / submit
   const handleNext = async () => {
     if (!answers[currentIndex] || answers[currentIndex].trim() === "") {
       setError("Please write an answer before proceeding.");
@@ -81,7 +81,7 @@ export default function InterviewClient() {
       return;
     }
 
-    // 🔥 FINAL SUBMISSION (UPDATED LOGIC)
+    // 🔥 FINAL SUBMISSION
     setSubmitting(true);
 
     try {
@@ -103,8 +103,24 @@ export default function InterviewClient() {
 
       const finalResult = await res.json();
 
-      // ✅ Save directly (no manual calculation anymore)
+      // ✅ Save result (for result page)
       localStorage.setItem("result", JSON.stringify(finalResult));
+
+      // 🔥 SAVE HISTORY HERE (ONLY PLACE)
+      const newEntry = {
+        role,
+        answers,
+        result: finalResult,
+        date: new Date().toISOString(),
+      };
+
+      const existingHistory = JSON.parse(localStorage.getItem("history")) || [];
+
+      existingHistory.push(newEntry);
+
+      localStorage.setItem("history", JSON.stringify(existingHistory));
+
+      // 🚫 Remove this flag if you're not using it
       localStorage.setItem("interview_done", "true");
 
       router.push(`/result?role=${role}`);
@@ -130,10 +146,8 @@ export default function InterviewClient() {
   return (
     <div className="container">
       <div className="card">
-        {/* Timer */}
         <p className="progress">
-          ⏱ {Math.floor(time / 60)}:
-          {(time % 60).toString().padStart(2, "0")}
+          ⏱ {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, "0")}
         </p>
 
         <p className="progress">
@@ -153,9 +167,7 @@ export default function InterviewClient() {
           {answers[currentIndex]?.length || 0} characters
         </p>
 
-        {error && (
-          <p style={{ color: "#ef4444", marginTop: "8px" }}>{error}</p>
-        )}
+        {error && <p style={{ color: "#ef4444", marginTop: "8px" }}>{error}</p>}
 
         <button
           className="button blue"
@@ -165,8 +177,8 @@ export default function InterviewClient() {
           {submitting
             ? "Analyzing your answers..."
             : currentIndex === questions.length - 1
-            ? "Finish Interview"
-            : "Next"}
+              ? "Finish Interview"
+              : "Next"}
         </button>
       </div>
     </div>
