@@ -108,25 +108,25 @@ Readiness =
 
 ### 🎤 Interview
 
-<p align="center">
+<p align="left">
   <img src="./screenshots/interview.png" width="150"/>
 </p>
 
 ### Interview Analysis
 
-<p align="center">
+<p align="left">
   <img src="./screenshots/interviewanalysis.png" width="150"/>
 </p>
 
 ### 📄 Resume Analysis
 
-<p align="center">
+<p align="left">
   <img src="./screenshots/resume.png" width="150"/>
 </p>
 
 ### 🧠 Aptitude Test
 
-<p align="center">
+<p align="left">
   <img src="./screenshots/aptitude.png" width="150"/>
 </p>
 
