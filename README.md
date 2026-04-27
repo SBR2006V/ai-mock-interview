@@ -135,9 +135,13 @@ User → Frontend (Next.js)
 ## 🔄 Application Flow
 
 Home
+
 ├── Interview → Result → Saved → Dashboard
+
 ├── Resume → Analysis → Saved → Dashboard
+
 ├── Aptitude → Score → Saved → Dashboard
+
 └── History → Revisit Results
 
 ---
