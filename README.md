@@ -166,11 +166,20 @@ User → Frontend (Next.js)
 
 ## 🔄 Application Flow
 
-Home
-├── Interview → Result → Saved → Dashboard
-├── Resume → Analysis → Saved → Dashboard
-├── Aptitude → Score → Saved → Dashboard
-└── History → Revisit Results
+### 🏠 Home
+
+- Start Interview → Get Result → Saved → Dashboard
+- Resume Analyzer → Analysis → Saved → Dashboard
+- Aptitude Test → Score → Saved → Dashboard
+
+### 📊 Dashboard
+
+- Aggregates performance (Resume + Interview + Aptitude)
+
+### 📜 History
+
+- View past results
+- Click to revisit
 
 ---
 
