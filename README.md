@@ -102,24 +102,33 @@ Readiness =
 
 ### 📊 Dashboard
 
-![Dashboard](./screenshots/dashboard.png)
+<p align="center">
+  <img src="./screenshots/dashboard.png" width="280"/>
+</p>
 
 ### 🎤 Interview
 
-![Interview](./screenshots/interview.png)
+<p align="center">
+  <img src="./screenshots/interview.png" width="280"/>
+</p>
 
 ### Interview Analysis
 
-![Interview analysis](./screenshots/interviewanalysis.png)
+<p align="center">
+  <img src="./screenshots/interviewanalysis.png" width="280"/>
+</p>
 
 ### 📄 Resume Analysis
 
-![Resume](./screenshots/resume.png)
+<p align="center">
+  <img src="./screenshots/resume.png" width="280"/>
+</p>
 
 ### 🧠 Aptitude Test
 
-![Aptitude](./screenshots/aptitude.png)
-
+<p align="center">
+  <img src="./screenshots/aptitude.png" width="280"/>
+</p>
 ## 🏗 Tech Stack
 
 ### Frontend
