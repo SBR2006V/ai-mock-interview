@@ -104,9 +104,13 @@ Readiness =
 
 ![Dashboard](./screenshots/dashboard.png)
 
-### 🎤 Interview Flow
+### 🎤 Interview
 
 ![Interview](./screenshots/interview.png)
+
+### Interview Analysis
+
+![Interview analysis](./screenshots/interviewanalysis.png)
 
 ### 📄 Resume Analysis
 
