@@ -103,32 +103,33 @@ Readiness =
 ### 📊 Dashboard
 
 <p align="center">
-  <img src="./screenshots/dashboard.png" width="280"/>
+  <img src="./screenshots/dashboard.png" width="150"/>
 </p>
 
 ### 🎤 Interview
 
 <p align="center">
-  <img src="./screenshots/interview.png" width="280"/>
+  <img src="./screenshots/interview.png" width="150"/>
 </p>
 
 ### Interview Analysis
 
 <p align="center">
-  <img src="./screenshots/interviewanalysis.png" width="280"/>
+  <img src="./screenshots/interviewanalysis.png" width="150"/>
 </p>
 
 ### 📄 Resume Analysis
 
 <p align="center">
-  <img src="./screenshots/resume.png" width="280"/>
+  <img src="./screenshots/resume.png" width="150"/>
 </p>
 
 ### 🧠 Aptitude Test
 
 <p align="center">
-  <img src="./screenshots/aptitude.png" width="280"/>
+  <img src="./screenshots/aptitude.png" width="150"/>
 </p>
+
 ## 🏗 Tech Stack
 
 ### Frontend
