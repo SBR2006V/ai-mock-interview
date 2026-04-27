@@ -235,16 +235,6 @@ Transforms separate tools into a **single intelligent platform**
 
 ---
 
-## 📸 Screens (Optional)
-
-- Home Page
-- Interview Flow
-- Resume Analysis
-- Dashboard
-- History
-
----
-
 ## 🚀 Future Improvements
 
 - Add authentication (user accounts)
