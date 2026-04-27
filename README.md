@@ -98,6 +98,24 @@ Readiness =
 
 ---
 
+## 📸 Screenshots
+
+### 📊 Dashboard
+
+![Dashboard](./screenshots/dashboard.png)
+
+### 🎤 Interview Flow
+
+![Interview](./screenshots/interview.png)
+
+### 📄 Resume Analysis
+
+![Resume](./screenshots/resume.png)
+
+### 🧠 Aptitude Test
+
+![Aptitude](./screenshots/aptitude.png)
+
 ## 🏗 Tech Stack
 
 ### Frontend
@@ -135,13 +153,9 @@ User → Frontend (Next.js)
 ## 🔄 Application Flow
 
 Home
-
 ├── Interview → Result → Saved → Dashboard
-
 ├── Resume → Analysis → Saved → Dashboard
-
 ├── Aptitude → Score → Saved → Dashboard
-
 └── History → Revisit Results
 
 ---

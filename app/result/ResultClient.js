@@ -155,6 +155,18 @@ export default function ResultClient() {
             Try Again
           </button>
         </div>
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
+          <button
+            className="button"
+            style={{
+              background: "#334155",
+              color: "white",
+            }}
+            onClick={() => router.push("/")}
+          >
+            ← Back to Home
+          </button>
+        </div>
       </div>
     </div>
   );
