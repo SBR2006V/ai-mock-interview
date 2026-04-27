@@ -37,7 +37,16 @@ Rules:
     const text = completion.choices[0].message.content;
 
     const cleaned = text.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(cleaned);
+    let parsed;
+
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (err) {
+      console.error("Bad AI response:", cleaned);
+      return NextResponse.json({
+        questions: ["Failed to generate questions"],
+      });
+    }
 
     return NextResponse.json(parsed);
   } catch (error) {
@@ -45,7 +54,7 @@ Rules:
 
     return NextResponse.json(
       { questions: ["Error generating questions"] },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -108,9 +108,11 @@ export default function InterviewClient() {
 
       // 🔥 SAVE HISTORY HERE (ONLY PLACE)
       const newEntry = {
+        type: "interview",
         role,
-        answers,
-        result: finalResult,
+        score: finalResult.score,
+        verdict: finalResult.verdict,
+        full: finalResult,
         date: new Date().toISOString(),
       };
 
