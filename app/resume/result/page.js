@@ -52,14 +52,11 @@ export default function ResumeResultPage() {
   return (
     <div className="container">
       <div className="card">
-
         {/* 🔥 HEADER (CENTERED IS OK HERE) */}
         <div style={{ textAlign: "center" }}>
           <h1 className="title">Resume Analysis</h1>
 
-          <h2 style={{ marginBottom: "10px" }}>
-            ATS Score: {data.score}/100
-          </h2>
+          <h2 style={{ marginBottom: "10px" }}>ATS Score: {data.score}/100</h2>
 
           {/* Progress Bar */}
           <div
@@ -91,9 +88,7 @@ export default function ResumeResultPage() {
           }}
         >
           <h3>📌 Summary</h3>
-          <p style={{ opacity: 0.9 }}>
-            {data.summary}
-          </p>
+          <p style={{ opacity: 0.9 }}>{data.summary}</p>
 
           <h3 style={{ marginTop: "20px" }}>🚀 Suggestions</h3>
 
@@ -128,7 +123,6 @@ export default function ResumeResultPage() {
             ← Back to Home
           </button>
         </div>
-
       </div>
     </div>
   );
