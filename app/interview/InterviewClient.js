@@ -129,7 +129,10 @@ export default function InterviewClient() {
         score: finalResult.score,
         verdict: finalResult.verdict,
         full: finalResult,
-        date: new Date().toISOString(),
+        date: new Date().toLocaleString("en-IN", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        }),
       };
 
       const existingHistory = JSON.parse(localStorage.getItem("history")) || [];
