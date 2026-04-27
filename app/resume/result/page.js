@@ -9,34 +9,67 @@ export default function ResumeResultPage() {
 
   // 🔥 LOAD DATA
   useEffect(() => {
-    const stored = localStorage.getItem("resume_result");
+    try {
+      const stored = localStorage.getItem("resume_result");
 
-    if (stored) {
-      try {
+      if (stored) {
         const parsed = JSON.parse(stored);
         setData(parsed);
-      } catch {
-        console.error("Invalid JSON in resume_result");
+      } else {
+        router.push("/"); // fallback
       }
+    } catch {
+      console.error("Invalid JSON in resume_result");
+      router.push("/");
     }
-  }, []);
+  }, [router]);
 
-  // 🔥 SAVE TO HISTORY (CRITICAL FIX)
+  // 🔥 STREAK + HISTORY (FIXED)
   useEffect(() => {
     if (!data) return;
 
-    const history = JSON.parse(localStorage.getItem("history") || "[]");
+    try {
+      // ✅ STREAK LOGIC (SAFE - CLIENT ONLY)
+      const lastUsed = localStorage.getItem("last_used");
+      const today = new Date().toDateString();
 
-    const newEntry = {
-      type: "resume",
-      score: data.score,
-      date: new Date().toLocaleString(),
-      full: data, // ✅ REQUIRED for detail view
-    };
+      if (lastUsed !== today) {
+        let streak = Number(localStorage.getItem("streak")) || 0;
+        streak++;
+        localStorage.setItem("streak", streak);
+        localStorage.setItem("last_used", today);
+      }
 
-    const updated = [newEntry, ...history].slice(0, 10);
+      // ✅ HISTORY SAVE WITH DUPLICATE CHECK
+      const history = JSON.parse(localStorage.getItem("history") || "[]");
 
-    localStorage.setItem("history", JSON.stringify(updated));
+      const newEntry = {
+        type: "resume",
+        score: data.score,
+        date: new Date().toLocaleString("en-IN", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        }),
+        full: data,
+      };
+
+      const last = history[0];
+
+      if (
+        last &&
+        last.type === "resume" &&
+        last.score === newEntry.score &&
+        JSON.stringify(last.full) === JSON.stringify(newEntry.full)
+      ) {
+        return; // 🚫 prevent duplicate
+      }
+
+      const updated = [newEntry, ...history].slice(0, 10);
+
+      localStorage.setItem("history", JSON.stringify(updated));
+    } catch (err) {
+      console.error("Save error:", err);
+    }
   }, [data]);
 
   if (!data) {
@@ -52,7 +85,7 @@ export default function ResumeResultPage() {
   return (
     <div className="container">
       <div className="card">
-        {/* 🔥 HEADER (CENTERED IS OK HERE) */}
+        {/* HEADER */}
         <div style={{ textAlign: "center" }}>
           <h1 className="title">Resume Analysis</h1>
 
@@ -78,7 +111,7 @@ export default function ResumeResultPage() {
           </div>
         </div>
 
-        {/* 🔥 CONTENT (LEFT ALIGNED FIX) */}
+        {/* CONTENT */}
         <div
           style={{
             textAlign: "left",
@@ -102,7 +135,7 @@ export default function ResumeResultPage() {
           </ul>
         </div>
 
-        {/* 🔥 BUTTONS */}
+        {/* BUTTONS */}
         <div style={{ marginTop: "25px", textAlign: "center" }}>
           <button
             className="button green"

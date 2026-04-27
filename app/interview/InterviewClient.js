@@ -114,6 +114,17 @@ export default function InterviewClient() {
 
       const finalResult = await res.json();
 
+      // 🔥 STREAK LOGIC (ADD HERE)
+      const lastUsed = localStorage.getItem("last_used");
+      const today = new Date().toDateString();
+
+      if (lastUsed !== today) {
+        let streak = Number(localStorage.getItem("streak")) || 0;
+        streak++;
+        localStorage.setItem("streak", streak);
+        localStorage.setItem("last_used", today);
+      }
+
       // ✅ BASIC VALIDATION
       if (!finalResult || typeof finalResult.score === "undefined") {
         throw new Error("Invalid evaluation response");

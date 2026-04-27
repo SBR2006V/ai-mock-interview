@@ -5,6 +5,18 @@ import { useRouter } from "next/navigation";
 export default function ResumeHome() {
   const router = useRouter();
 
+  const handleStart = () => {
+    try {
+      // 🔥 RESET ANY PREVIOUS FLOW STATE
+      sessionStorage.removeItem("resume_saved"); // if still used anywhere
+      localStorage.removeItem("resume_result"); // prevent stale reuse
+    } catch (err) {
+      console.error("Reset failed");
+    }
+
+    router.push("/resume/form");
+  };
+
   return (
     <div className="container">
       <div className="card" style={{ textAlign: "center" }}>
@@ -19,7 +31,7 @@ export default function ResumeHome() {
         <button
           className="button blue"
           style={{ marginTop: "20px", width: "100%" }}
-          onClick={() => router.push("/resume/form")}
+          onClick={handleStart}
         >
           Start Resume Analysis
         </button>
