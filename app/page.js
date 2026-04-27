@@ -87,6 +87,16 @@ export default function Home() {
           >
             📊 View History
           </button>
+          <button
+            className="roleBtn"
+            style={{
+              background: "linear-gradient(135deg, #facc15, #eab308)",
+              color: "black",
+            }}
+            onClick={() => router.push("/aptitude")}
+          >
+            🧠 Aptitude Challenge
+          </button>
         </div>
       </div>
     </div>

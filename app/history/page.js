@@ -8,6 +8,9 @@ export default function HistoryPage() {
   const [history, setHistory] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // 🔥 Aptitude modal
+  const [aptitudeView, setAptitudeView] = useState(null);
+
   useEffect(() => {
     try {
       const stored = localStorage.getItem("history");
@@ -47,13 +50,17 @@ export default function HistoryPage() {
               onClick={() => {
                 if (item.type === "interview") {
                   localStorage.setItem("result", JSON.stringify(item.full));
-                  router.push(`/result?role=${item.role}`);
-                } else {
+                  window.location.href = `/result?role=${item.role}`;
+                } else if (item.type === "resume") {
+                  // 🔥 CRITICAL FIX (prevents duplication)
                   localStorage.setItem(
                     "resume_result",
                     JSON.stringify(item.full),
                   );
-                  router.push(`/resume/result`);
+                  localStorage.setItem("from_history", "true"); // ✅ IMPORTANT
+                  window.location.href = `/resume/result`;
+                } else if (item.type === "aptitude") {
+                  setAptitudeView(item);
                 }
               }}
               style={{
@@ -68,26 +75,43 @@ export default function HistoryPage() {
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
+              {/* TYPE */}
               <p style={{ fontSize: "14px", opacity: 0.7 }}>
-                {item.type === "interview" ? "🎤 Interview" : "📄 Resume"}
+                {item.type === "interview"
+                  ? "🎤 Interview"
+                  : item.type === "resume"
+                    ? "📄 Resume"
+                    : item.type === "aptitude"
+                      ? "🧠 Aptitude"
+                      : "📦 Other"}
               </p>
 
+              {/* ROLE */}
               {item.role && (
                 <p style={{ fontWeight: "600" }}>Role: {item.role}</p>
               )}
 
+              {/* SCORE */}
               <p>
                 Score:{" "}
                 <span style={{ color: "#22c55e", fontWeight: "600" }}>
                   {item.score}
-                  {item.type === "interview" ? "/10" : "/100"}
+                  {item.type === "interview"
+                    ? "/10"
+                    : item.type === "resume"
+                      ? "/100"
+                      : item.type === "aptitude"
+                        ? "/5"
+                        : ""}
                 </span>
               </p>
 
+              {/* VERDICT */}
               {item.verdict && (
                 <p style={{ fontSize: "14px" }}>Verdict: {item.verdict}</p>
               )}
 
+              {/* DATE */}
               <p style={{ fontSize: "12px", opacity: 0.6 }}>{item.date}</p>
             </div>
           ))}
@@ -109,7 +133,7 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {/* 🔥 CUSTOM MODAL */}
+      {/* 🔥 CLEAR HISTORY MODAL */}
       {showConfirm && (
         <div className="modalOverlay">
           <div className="modalBox">
@@ -129,6 +153,31 @@ export default function HistoryPage() {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🔥 APTITUDE MODAL */}
+      {aptitudeView && (
+        <div className="modalOverlay">
+          <div className="modalBox">
+            <h3>🧠 Aptitude Result</h3>
+
+            <p>
+              Score: <strong>{aptitudeView.score}/5</strong>
+            </p>
+
+            <p style={{ fontSize: "14px", opacity: 0.7 }}>
+              {aptitudeView.date}
+            </p>
+
+            <button
+              className="button"
+              style={{ marginTop: "15px" }}
+              onClick={() => setAptitudeView(null)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

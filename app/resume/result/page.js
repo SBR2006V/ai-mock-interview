@@ -16,7 +16,7 @@ export default function ResumeResultPage() {
         const parsed = JSON.parse(stored);
         setData(parsed);
       } else {
-        router.push("/"); // fallback
+        router.push("/");
       }
     } catch {
       console.error("Invalid JSON in resume_result");
@@ -24,12 +24,20 @@ export default function ResumeResultPage() {
     }
   }, [router]);
 
-  // 🔥 STREAK + HISTORY (FIXED)
+  // 🔥 STREAK + HISTORY (PROPER FIX)
   useEffect(() => {
     if (!data) return;
 
     try {
-      // ✅ STREAK LOGIC (SAFE - CLIENT ONLY)
+      // 🔴 CRITICAL FIX: CHECK IF COMING FROM HISTORY
+      const fromHistory = localStorage.getItem("from_history");
+
+      if (fromHistory === "true") {
+        localStorage.removeItem("from_history"); // cleanup
+        return; // 🚫 DO NOT SAVE AGAIN
+      }
+
+      // ✅ STREAK LOGIC
       const lastUsed = localStorage.getItem("last_used");
       const today = new Date().toDateString();
 
@@ -40,7 +48,7 @@ export default function ResumeResultPage() {
         localStorage.setItem("last_used", today);
       }
 
-      // ✅ HISTORY SAVE WITH DUPLICATE CHECK
+      // ✅ HISTORY SAVE
       const history = JSON.parse(localStorage.getItem("history") || "[]");
 
       const newEntry = {
@@ -53,6 +61,7 @@ export default function ResumeResultPage() {
         full: data,
       };
 
+      // 🔥 OPTIONAL SAFETY (can keep)
       const last = history[0];
 
       if (
@@ -61,7 +70,7 @@ export default function ResumeResultPage() {
         last.score === newEntry.score &&
         JSON.stringify(last.full) === JSON.stringify(newEntry.full)
       ) {
-        return; // 🚫 prevent duplicate
+        return;
       }
 
       const updated = [newEntry, ...history].slice(0, 10);

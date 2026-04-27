@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [streak, setStreak] = useState(0);
 
   const [avgScore, setAvgScore] = useState(0);
+  const [readiness, setReadiness] = useState(0);
   const [totalAttempts, setTotalAttempts] = useState(0);
   const [recent, setRecent] = useState([]);
   const [insight, setInsight] = useState("");
@@ -27,38 +28,59 @@ export default function Dashboard() {
       // 🔥 TOTAL ATTEMPTS
       setTotalAttempts(storedHistory.length);
 
-      // 🔥 AVERAGE SCORE (normalize resume to /10)
-      let total = 0;
-      let count = 0;
-
       let interviewTotal = 0;
       let interviewCount = 0;
 
       let resumeTotal = 0;
       let resumeCount = 0;
 
+      let aptitudeTotal = 0;
+      let aptitudeCount = 0;
+
       storedHistory.forEach((item) => {
         if (item.type === "interview") {
-          total += item.score;
           interviewTotal += item.score;
           interviewCount++;
-          count++;
         } else if (item.type === "resume") {
-          const normalized = item.score / 10;
-          total += normalized;
-          resumeTotal += normalized;
+          resumeTotal += item.score;
           resumeCount++;
-          count++;
+        } else if (item.type === "aptitude") {
+          aptitudeTotal += item.score; // score out of 3
+          aptitudeCount++;
         }
       });
 
-      const avg = count ? (total / count).toFixed(1) : 0;
-      setAvgScore(avg);
+      // 🔥 AVERAGES
+      const interviewAvg = interviewCount ? interviewTotal / interviewCount : 0;
 
-      // 🔥 RECENT 3
+      const resumeAvg = resumeCount ? resumeTotal / resumeCount : 0;
+
+      const aptitudeAvg = aptitudeCount ? aptitudeTotal / aptitudeCount : 0;
+
+      // 🔥 AVG SCORE (DISPLAY ONLY)
+      const combinedAvg =
+        interviewCount + resumeCount > 0
+          ? (
+              (interviewAvg * interviewCount * 10 + resumeAvg * resumeCount) /
+              (interviewCount + resumeCount) /
+              10
+            ).toFixed(1)
+          : 0;
+
+      setAvgScore(combinedAvg);
+
+      // 🔥 READINESS SCORE (MAIN FEATURE)
+      const readinessScore =
+        interviewAvg * 10 * 0.4 +
+        resumeAvg * 0.4 +
+        aptitudeAvg * (100 / 3) * 0.2;
+
+      setReadiness(Math.round(readinessScore));
+
+      // 🔥 RECENT ACTIVITY
       setRecent(storedHistory.slice(0, 3));
 
-      // 🔥 INSIGHT (simple but powerful)
+      // 🔥 INSIGHT
       if (interviewCount && resumeCount) {
         const intAvg = interviewTotal / interviewCount;
         const resAvg = resumeTotal / resumeCount;
@@ -73,7 +95,9 @@ export default function Dashboard() {
           setInsight("⚖️ Your resume and interview performance are balanced.");
         }
       } else {
-        setInsight("🚀 Start using more features to unlock insights.");
+        setInsight(
+          "🚀 Use both interview and resume features to unlock insights.",
+        );
       }
     } catch (err) {
       console.error("Dashboard error:", err);
@@ -91,9 +115,40 @@ export default function Dashboard() {
           <p>
             🔥 Streak: <strong>{streak}</strong>
           </p>
+
+          <p
+            style={{
+              fontSize: "18px",
+              fontWeight: "700",
+              color: "#22c55e",
+            }}
+          >
+            🚀 Readiness Score: {readiness}/100
+          </p>
+
+          {/* 🔥 PROGRESS BAR */}
+          <div
+            style={{
+              width: "100%",
+              background: "#1e293b",
+              borderRadius: "10px",
+              overflow: "hidden",
+              marginBottom: "10px",
+            }}
+          >
+            <div
+              style={{
+                width: `${readiness}%`,
+                height: "10px",
+                background: "linear-gradient(90deg, #22c55e, #16a34a)",
+              }}
+            />
+          </div>
+
           <p>
             📊 Avg Score: <strong>{avgScore}/10</strong>
           </p>
+
           <p>
             🎯 Attempts: <strong>{totalAttempts}</strong>
           </p>
@@ -118,8 +173,15 @@ export default function Dashboard() {
               <p>
                 {item.type === "interview" ? "🎤" : "📄"} {item.type} — Score:{" "}
                 {item.score}
-                {item.type === "interview" ? "/10" : "/100"}
+                {item.type === "interview"
+                  ? "/10"
+                  : item.type === "resume"
+                    ? "/100"
+                    : item.type === "aptitude"
+                      ? "/5"
+                      : ""}
               </p>
+
               <p style={{ fontSize: "12px", opacity: 0.6 }}>{item.date}</p>
             </div>
           ))}
