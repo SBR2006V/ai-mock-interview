@@ -32,7 +32,7 @@ export default function InterviewClient() {
     if (r) setRole(r);
   }, [searchParams]);
 
-  // ✅ Fetch questions
+  // ✅ Fetch questions (FIXED)
   useEffect(() => {
     if (!role) return;
 
@@ -44,14 +44,24 @@ export default function InterviewClient() {
           body: JSON.stringify({ role }),
         });
 
+        // ✅ CHECK RESPONSE
+        if (!res.ok) {
+          throw new Error("Failed to fetch questions");
+        }
+
         const data = await res.json();
 
-        const q = data.questions || ["Failed to load questions"];
-        setQuestions(q);
-        setAnswers(new Array(q.length).fill(""));
+        // ✅ HARD VALIDATION
+        if (!data || !Array.isArray(data.questions)) {
+          throw new Error("Invalid API response");
+        }
+
+        setQuestions(data.questions);
+        setAnswers(new Array(data.questions.length).fill(""));
       } catch (err) {
-        console.error(err);
-        setQuestions(["Error loading questions"]);
+        console.error("Fetch Questions Error:", err);
+
+        setQuestions(["Something went wrong. Please retry."]);
         setAnswers([""]);
       } finally {
         setLoadingQuestions(false);
@@ -97,16 +107,22 @@ export default function InterviewClient() {
         }),
       });
 
+      // ✅ CHECK RESPONSE
       if (!res.ok) {
-        throw new Error("API failed");
+        throw new Error("Evaluation API failed");
       }
 
       const finalResult = await res.json();
 
-      // ✅ Save result (for result page)
+      // ✅ BASIC VALIDATION
+      if (!finalResult || typeof finalResult.score === "undefined") {
+        throw new Error("Invalid evaluation response");
+      }
+
+      // ✅ Save result
       localStorage.setItem("result", JSON.stringify(finalResult));
 
-      // 🔥 SAVE HISTORY HERE (ONLY PLACE)
+      // ✅ Save history
       const newEntry = {
         type: "interview",
         role,
@@ -122,12 +138,9 @@ export default function InterviewClient() {
 
       localStorage.setItem("history", JSON.stringify(existingHistory));
 
-      // 🚫 Remove this flag if you're not using it
-      localStorage.setItem("interview_done", "true");
-
       router.push(`/result?role=${role}`);
     } catch (err) {
-      console.error(err);
+      console.error("Submit Error:", err);
       setError("Something went wrong. Try again.");
     } finally {
       setSubmitting(false);

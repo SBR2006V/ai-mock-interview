@@ -3,7 +3,24 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { role } = await req.json();
+    // ✅ CHECK API KEY
+    if (!process.env.GROQ_API_KEY) {
+      return NextResponse.json(
+        { questions: ["Server config error: Missing API key"] },
+        { status: 500 },
+      );
+    }
+
+    const body = await req.json();
+    const role = body?.role;
+
+    // ✅ VALIDATE INPUT
+    if (!role) {
+      return NextResponse.json(
+        { questions: ["Invalid role provided"] },
+        { status: 400 },
+      );
+    }
 
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
@@ -34,9 +51,15 @@ Rules:
       ],
     });
 
-    const text = completion.choices[0].message.content;
+    const text = completion?.choices?.[0]?.message?.content;
+
+    // ✅ PROTECT AGAINST EMPTY RESPONSE
+    if (!text) {
+      throw new Error("Empty AI response");
+    }
 
     const cleaned = text.replace(/```json|```/g, "").trim();
+
     let parsed;
 
     try {
@@ -50,7 +73,7 @@ Rules:
 
     return NextResponse.json(parsed);
   } catch (error) {
-    console.error(error);
+    console.error("API ERROR:", error);
 
     return NextResponse.json(
       { questions: ["Error generating questions"] },

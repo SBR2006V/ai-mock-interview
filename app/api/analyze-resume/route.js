@@ -5,7 +5,31 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
+    // ✅ CHECK API KEY
+    if (!process.env.GROQ_API_KEY) {
+      return NextResponse.json(
+        {
+          score: 0,
+          summary: "Server config error: Missing API key",
+          suggestions: ["Contact developer"],
+        },
+        { status: 500 },
+      );
+    }
+
     const body = await request.json();
+
+    // ✅ VALIDATE INPUT
+    if (!body) {
+      return NextResponse.json(
+        {
+          score: 0,
+          summary: "Invalid input",
+          suggestions: ["Provide resume data"],
+        },
+        { status: 400 },
+      );
+    }
 
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY,
@@ -37,7 +61,12 @@ Rules:
       ],
     });
 
-    const text = completion.choices[0].message.content;
+    const text = completion?.choices?.[0]?.message?.content;
+
+    // ✅ PROTECT AGAINST EMPTY RESPONSE
+    if (!text) {
+      throw new Error("Empty AI response");
+    }
 
     console.log("RAW AI RESPONSE:", text);
 
@@ -50,7 +79,6 @@ Rules:
     } catch (err) {
       console.error("PARSE FAILED:", cleaned);
 
-      // 🔥 RETURN SAFE FALLBACK (CRITICAL)
       return NextResponse.json({
         score: 50,
         summary: "Basic resume detected",
@@ -62,11 +90,13 @@ Rules:
   } catch (error) {
     console.error("API ERROR:", error);
 
-    // 🔥 NEVER FAIL HARD
-    return NextResponse.json({
-      score: 40,
-      summary: "Error analyzing resume",
-      suggestions: ["Try again"],
-    });
+    return NextResponse.json(
+      {
+        score: 40,
+        summary: "Error analyzing resume",
+        suggestions: ["Try again"],
+      },
+      { status: 500 },
+    );
   }
 }

@@ -9,9 +9,14 @@ export default function HistoryPage() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("history");
-    if (stored) {
-      setHistory(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem("history");
+      if (stored) {
+        setHistory(JSON.parse(stored));
+      }
+    } catch (err) {
+      console.error("Invalid history data");
+      setHistory([]);
     }
   }, []);
 
@@ -24,7 +29,6 @@ export default function HistoryPage() {
   return (
     <div className="container">
       <div className="card">
-
         <h1 className="title">📊 History</h1>
         <p className="subtitle">Your past analyses</p>
 
@@ -43,10 +47,13 @@ export default function HistoryPage() {
               onClick={() => {
                 if (item.type === "interview") {
                   localStorage.setItem("result", JSON.stringify(item.full));
-                  window.location.href = `/result?role=${item.role}`;
+                  router.push(`/result?role=${item.role}`);
                 } else {
-                  localStorage.setItem("resume_result", JSON.stringify(item.full));
-                  window.location.href = `/resume/result`;
+                  localStorage.setItem(
+                    "resume_result",
+                    JSON.stringify(item.full),
+                  );
+                  router.push(`/resume/result`);
                 }
               }}
               style={{
@@ -66,9 +73,7 @@ export default function HistoryPage() {
               </p>
 
               {item.role && (
-                <p style={{ fontWeight: "600" }}>
-                  Role: {item.role}
-                </p>
+                <p style={{ fontWeight: "600" }}>Role: {item.role}</p>
               )}
 
               <p>
@@ -80,21 +85,16 @@ export default function HistoryPage() {
               </p>
 
               {item.verdict && (
-                <p style={{ fontSize: "14px" }}>
-                  Verdict: {item.verdict}
-                </p>
+                <p style={{ fontSize: "14px" }}>Verdict: {item.verdict}</p>
               )}
 
-              <p style={{ fontSize: "12px", opacity: 0.6 }}>
-                {item.date}
-              </p>
+              <p style={{ fontSize: "12px", opacity: 0.6 }}>{item.date}</p>
             </div>
           ))}
         </div>
 
         {/* BUTTONS */}
         <div style={{ display: "flex", gap: "10px", marginTop: "15px" }}>
-
           <button
             className="button"
             style={{ background: "#ef4444", color: "white" }}
@@ -103,15 +103,10 @@ export default function HistoryPage() {
             🗑 Clear History
           </button>
 
-          <button
-            className="button blue"
-            onClick={() => router.push("/")}
-          >
+          <button className="button blue" onClick={() => router.push("/")}>
             Back to Home
           </button>
-
         </div>
-
       </div>
 
       {/* 🔥 CUSTOM MODAL */}
@@ -119,9 +114,7 @@ export default function HistoryPage() {
         <div className="modalOverlay">
           <div className="modalBox">
             <h3>Clear History?</h3>
-            <p style={{ opacity: 0.8 }}>
-              This action cannot be undone.
-            </p>
+            <p style={{ opacity: 0.8 }}>This action cannot be undone.</p>
 
             <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
               <button
@@ -132,10 +125,7 @@ export default function HistoryPage() {
                 Yes, Clear
               </button>
 
-              <button
-                className="button"
-                onClick={() => setShowConfirm(false)}
-              >
+              <button className="button" onClick={() => setShowConfirm(false)}>
                 Cancel
               </button>
             </div>

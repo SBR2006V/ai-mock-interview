@@ -9,27 +9,49 @@ export default function ResultClient() {
 
   const [role, setRole] = useState("");
   const [feedback, setFeedback] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ Load result (ONLY read, no writing)
   useEffect(() => {
     const r = searchParams.get("role");
     if (r) setRole(r);
 
     try {
       const stored = localStorage.getItem("result");
+
       if (stored) {
         setFeedback(JSON.parse(stored));
+      } else {
+        // ❗ NO DATA → REDIRECT
+        router.push("/");
       }
     } catch (err) {
       console.error("Invalid result data");
+      router.push("/");
+    } finally {
+      setLoading(false);
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
-  if (!feedback) {
+  // ✅ Proper loading state
+  if (loading) {
     return (
       <div className="container">
         <div className="card">
           <p>Loading result...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ❗ Safety fallback
+  if (!feedback) {
+    return (
+      <div className="container">
+        <div className="card">
+          <p>No result found. Please try again.</p>
+          <button className="button blue" onClick={() => router.push("/")}>
+            Go Home
+          </button>
         </div>
       </div>
     );
