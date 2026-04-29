@@ -23,7 +23,9 @@ export default function Home() {
   return (
     <div className="homeContainer">
       <div className="homeCard">
-        <h1 className="homeTitle">AI Mock Interview</h1>
+        <h1 className="homeTitle">
+          CareerLaunch - AI-Powered Placement Readiness Platform
+        </h1>
 
         <p className="homeSubtitle">
           Practice interviews and get instant feedback

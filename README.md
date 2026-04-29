@@ -1,4 +1,4 @@
-# 🚀 AI Placement Preparation Platform
+# 🚀 CareerLaunch - AI-Powered Placement Readiness Platform
 
 A complete AI-powered platform designed to help students prepare for placements through **Interview Practice, Resume Analysis, Aptitude Testing, and Performance Tracking**.
 
