@@ -1,4 +1,4 @@
-# 🚀 CareerLaunch - AI-Powered Placement Readiness Platform
+# 🚀 InterviewAI – Smart Mock Interview Platform
 
 A complete AI-powered platform designed to help students prepare for placements through **Interview Practice, Resume Analysis, Aptitude Testing, and Performance Tracking**.
 
