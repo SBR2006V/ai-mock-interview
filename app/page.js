@@ -24,7 +24,7 @@ export default function Home() {
     <div className="homeContainer">
       <div className="homeCard">
         <h1 className="homeTitle">
-          InterviewAI – Smart Mock Interview Platform
+          AI Mock Interview – Smart Mock Interview Platform
         </h1>
 
         <p className="homeSubtitle">

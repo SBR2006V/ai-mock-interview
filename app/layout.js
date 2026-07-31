@@ -1,7 +1,7 @@
 import "./globals.css"; // ✅ THIS WAS MISSING
 
 export const metadata = {
-  title: "InterviewAI – Smart Mock Interview Platform",
+  title: "AI Mock Interview – Smart Mock Interview Platform",
   description: "Practice interviews",
 };
 

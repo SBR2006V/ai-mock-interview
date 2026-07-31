@@ -1,4 +1,4 @@
-# 🚀 InterviewAI – Smart Mock Interview Platform
+# 🚀 AI Mock Interview – Smart Mock Interview Platform
 
 A complete AI-powered platform designed to help students prepare for placements through **Interview Practice, Resume Analysis, Aptitude Testing, and Performance Tracking**.
 
